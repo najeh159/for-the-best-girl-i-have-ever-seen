@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz - Describe Me</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styless.css">
+</head>
+<body class="page-transition">
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index1.html">Why I Like You</a></li>
+      <li><a href="index2.html">Compliments</a></li>
+      <li><a href="index3.html">Traits on you</a></li>
+      <li><a href="index4.html">The big Reveal</a></li>
+      <li><a href="index5.html">Qualities List</a></li>
+      <li><a href="index7.html">Quiz for the best person</a></li>
+    </ul>
+  </nav>
+  <header>
+    <h1>Describe Me</h1>
+    <p>Pick the words that best describe me and write your own thoughts!</p>
+  </header>
+
+  <main>
+    <form id="quiz-form">
+      <div class="question">
+        <p>How would you describe my personality?</p>
+        <label>
+          <input type="checkbox" name="personality" value="Kind"> Kind
+        </label>
+        <label>
+          <input type="checkbox" name="personality" value="Funny"> Funny
+        </label>
+        <label>
+          <input type="checkbox" name="personality" value="Creative"> Creative
+        </label>
+        <label>
+          <input type="checkbox" name="personality" value="Loyal"> Loyal
+        </label>
+        <label>
+          <input type="checkbox" name="personality" value="Brave"> Brave
+        </label>
+        <label>
+          <input type="text" name="personality-other" placeholder="Or write your own opinion...">
+        </label>
+      </div>
+
+      <div class="question">
+        <p>How would you describe my appearance?</p>
+        <label>
+          <input type="checkbox" name="appearance" value="Handsome"> Handsome
+        </label>
+        <label>
+          <input type="checkbox" name="appearance" value="Stylish"> Stylish
+        </label>
+        <label>
+          <input type="checkbox" name="appearance" value="Charming"> Charming
+        </label>
+        <label>
+          <input type="checkbox" name="appearance" value="Attractive"> Attractive
+        </label>
+        <label>
+          <input type="checkbox" name="appearance" value="Elegant"> Elegant
+        </label>
+        <label>
+          <input type="text" name="appearance-other" placeholder="Or write your own opinion...">
+        </label>
+      </div>
+
+      <div class="question">
+        <p>What are my best traits?</p>
+        <label>
+          <input type="checkbox" name="traits" value="Generous"> Generous
+        </label>
+        <label>
+          <input type="checkbox" name="traits" value="Hardworking"> Hardworking
+        </label>
+        <label>
+          <input type="checkbox" name="traits" value="Honest"> Honest
+        </label>
+        <label>
+          <input type="checkbox" name="traits" value="Respectful"> Respectful
+        </label>
+        <label>
+          <input type="checkbox" name="traits" value="Supportive"> Supportive
+        </label>
+        <label>
+          <input type="text" name="traits-other" placeholder="Or write your own opinion...">
+        </label>
+      </div>
+
+      <div class="question">
+        <p>Write your own description of me:</p>
+        <textarea 
+          name="customDescription" 
+          id="custom-description" 
+          rows="4" 
+          placeholder="Write anything you want..."
+        ></textarea>
+      </div>
+
+      <button type="button" onclick="showResults()">Submit</button>
+    </form>
+
+    <div id="result" style="display:none;">
+      <h2>Your Description of Me:</h2>
+      <p id="description"></p>
+    </div>
+  </main>
+
+  <script>
+    function showResults() {
+      const personality = document.querySelectorAll('input[name="personality"]:checked');
+      const appearance = document.querySelectorAll('input[name="appearance"]:checked');
+      const traits = document.querySelectorAll('input[name="traits"]:checked');
+      
+      // Get custom inputs
+      const personalityOther = document.querySelector('input[name="personality-other"]').value;
+      const appearanceOther = document.querySelector('input[name="appearance-other"]').value;
+      const traitsOther = document.querySelector('input[name="traits-other"]').value;
+      const customDescription = document.getElementById("custom-description").value;
+
+      let description = "You described me as: ";
+
+      // Add personality description
+      if (personality.length > 0 || personalityOther) {
+        description += "\nPersonality: " + Array.from(personality).map(input => input.value).join(", ");
+        if (personalityOther) {
+          description += (personality.length > 0 ? ", " : "") + personalityOther;
+        }
+        description += ". ";
+      }
+
+      // Add appearance description
+      if (appearance.length > 0 || appearanceOther) {
+        description += "\nAppearance: " + Array.from(appearance).map(input => input.value).join(", ");
+        if (appearanceOther) {
+          description += (appearance.length > 0 ? ", " : "") + appearanceOther;
+        }
+        description += ". ";
+      }
+
+      // Add traits description
+      if (traits.length > 0 || traitsOther) {
+        description += "\nBest Traits: " + Array.from(traits).map(input => input.value).join(", ");
+        if (traitsOther) {
+          description += (traits.length > 0 ? ", " : "") + traitsOther;
+        }
+        description += ". ";
+      }
+
+      // Add custom description
+      if (customDescription.trim()) {
+        description += "\n\nYour own words: \"" + customDescription + "\".";
+      }
+
+      // Display the results on the page
+      document.getElementById("description").textContent = description;
+      document.getElementById("result").style.display = "block";
+
+      // Send the results to Discord webhook
+      const webhookUrl = "https://discord.com/api/webhooks/1315383957512130570/SV_THuVNyVGMzfgzlPDEoT0uhHpRdg8WPg160zRQbSS4n1c0t0MKZFgM05SP8EKi9aXo";
+      const payload = {
+        content: description
+      };
+
+      fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log("Message sent to Discord successfully!");
+        } else {
+          console.error("Failed to send message to Discord.");
+        }
+      })
+      .catch(error => console.error("Error:", error));
+    }
+  </script>
+</body>
+</html>
